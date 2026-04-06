@@ -1,0 +1,32 @@
+# Entorno virtual
+venv/
+.env
+config copy.py
+app2.py
+
+# Python
+__pycache__/
+*.pyc
+
+# Archivos del sistema
+.DS_Store
+
+# Streamlit
+.streamlit/
+
+# Logs
+*.log
+
+# Archivos temporales
+*.tmp
+
+# Jupyter (por si acaso)
+.ipynb_checkpoints/
+
+# Modelos o pesos grandes
+*.pt
+*.pth
+
+# Configs sensibles
+config.py
+secrets.toml
