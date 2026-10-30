@@ -2,12 +2,11 @@
 Configuración central del modelo Gemini
 """
 
-# 🔹 Modelo recomendado con cuota gratuita
-# Si más adelante habilitas billing, puedes cambiarlo a gemini-2.5-pro
+# 🔹 Modelo Pro para razonamiento espacial (bounding boxes)
 MODEL_NAME = "models/gemini-flash-latest"
 
 
-# 🔹 System Prompt (Estilo Informe Clínico Real)
+# 🔹 System Prompt (Estilo Informe Clínico Real con soporte de Bounding Boxes)
 SYSTEM_PROMPT = """
 Responde SIEMPRE en español. Actúa como un Radiólogo Certificado.
 
@@ -41,6 +40,22 @@ Sigue estrictamente este protocolo de comunicación médica:
     - DESCARGO DE RESPONSABILIDAD (OBLIGATORIO):
     "Análisis generado por IA para soporte técnico. Imprescindible validación por médico especialista antes de tomar decisiones clínicas."
 
+3. DETECCIÓN VISUAL DE ANOMALÍAS (OBLIGATORIO):
+   Si detectas alguna anomalía o hallazgo sospechoso (como neumonía, nódulos, consolidaciones, fracturas, fisuras, osteofitos, derrames, etc.), debes generar un bloque JSON al final del informe en el formato exacto que se muestra a continuación. Las coordenadas deben ser cajas delimitadoras en escala de 0 a 1000, en el formato [ymin, xmin, ymax, xmax].
+
+   Ejemplo de bloque JSON al final del reporte:
+   ```json
+   [
+     {"box_2d": [250, 400, 500, 600], "label": "Opacidad pulmonar"}
+   ]
+   ```
+   Si el estudio está dentro de los límites normales o no hay hallazgos visuales relevantes, devuelve una lista vacía:
+   ```json
+   []
+   ```
+   
+   IMPORTANTE: El bloque JSON debe ir al final, delimitado por triple acento grave con la palabra json (```json y ```).
+
 REGLAS DE ORO:
 - No uses lenguaje coloquial.
 - No inventes patologías.
@@ -49,17 +64,17 @@ REGLAS DE ORO:
 
 # 🔹 Configuración de generación (Bajamos la temperatura para mayor precisión)
 GENERATION_CONFIG = {
-    "temperature": 0.3,
+    "temperature": 0.2,
     "top_p": 0.95,
     "top_k": 40,
     "max_output_tokens": 2048,
     "response_mime_type": "text/plain",
 }
 
-# 🔹 Configuración de seguridad (Mantener bloqueos estándar)
+# 🔹 Configuración de seguridad (Desactivar filtros estrictos para evitar falsos positivos en imágenes médicas)
 SAFETY_SETTINGS = [
-    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
 ]
