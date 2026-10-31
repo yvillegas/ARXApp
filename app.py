@@ -342,7 +342,7 @@ with tab_analisis:
 
             # 🔥 CONTROL: evita reenvío
             if not st.session_state["analizado"]:
-                with st.spinner("Analizando con IA (Gemini Pro)..."):
+                with st.spinner("Analizando ..."):
                     try:
                         content = [
                             f"Analiza esta imagen de rayos X de la región '{region_anatomica}' y genera el informe estructurado siguiendo estrictamente el protocolo médico definido en las instrucciones del sistema.",
